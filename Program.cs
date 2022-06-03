@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Text.Json;
 using static Lab6.Users;
 namespace Lab6
 {
@@ -217,6 +220,17 @@ namespace Lab6
             //ZAPYTANIE 13
 
             Console.WriteLine("ZAPYTANIE 13\n");
+
+            var ObjAVG = Users.Get().Where(a => a.Marks != null).Select(a => new { Type = a.Name, avg = a.Marks.Average() }).ToList();
+
+            foreach (var b in ObjAVG) Console.WriteLine(b);
+
+
+
+
+
+
+
             Console.WriteLine("-----------------------------------\n");
 
 
@@ -312,6 +326,44 @@ namespace Lab6
 
 
             Console.WriteLine("-----------------------------------\n");
+
+
+
+
+
+            //SERIALIZACJA JSON
+            Console.WriteLine("SERIALIZACJIA JOSN");
+            string json = JsonSerializer.Serialize(myusers18.Last());
+            Console.WriteLine(json);
+
+            Console.WriteLine("DEERIALIZACJIA JOSN");
+           // string jsond = "{\"Name\":\"Jan Kowalski\",Role\":\"Student\",\"Age\":30\",\"Marks\":\"[2,2,2,2,2]\",\"CreatedAt\":2022-02-09T00:00:00\",\"RemoveAt\":\"null\"}";  
+          
+            User Myuser = JsonSerializer.Deserialize<User>(json);
+
+           
+            Console.WriteLine("Name: " + Myuser.Name);  
+            Console.WriteLine("Role: " + Myuser.Role);    
+            Console.WriteLine("Age: " + Myuser.Age);    
+            Console.WriteLine("Marks: " + Myuser.Marks);    
+            Console.WriteLine("CreatedAT: " + Myuser.CreatedAt);    
+            Console.WriteLine("RemoveAt: " + Myuser.RemovedAt);
+
+            //SERIALIZE BINARY
+            var serbin = new BinaryFormatter();
+
+            using var serbinstream = new MemoryStream();
+            serbin.Serialize(serbinstream, myusers18.Last());
+            serbinstream.Flush();
+            serbinstream.Position = 0;
+
+            var mybinuser = serbinstream.ToArray();
+
+
+            //deserialize binary
+
+            using var MybinList = new MemoryStream();
+            serbin.Serialize(serbinstream, myusers18.Last());
 
         }
     }
